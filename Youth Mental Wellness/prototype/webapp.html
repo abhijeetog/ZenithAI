@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith AI - Your Mental Wellness Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-bubble-user {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+        }
+        .chat-bubble-ai {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <svg class="h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 12a9.75 9.75 0 11-19.5 0 9.75 9.75 0 0119.5 0z" />
+                    </svg>
+                    <span class="ml-2 text-xl font-bold text-slate-700">Zenith AI</span>
+                </div>
+                <button id="sos-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300 shadow-md">
+                    SOS
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <!-- Navigation Tabs -->
+            <div class="border-b border-slate-200">
+                <nav class="flex -mb-px" aria-label="Tabs">
+                    <button onclick="showTab('chat')" class="tab-button w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm border-blue-500 text-blue-600">
+                        AI Buddy
+                    </button>
+                    <button onclick="showTab('journal')" class="tab-button w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+                        Journal
+                    </button>
+                    <button onclick="showTab('zen')" class="tab-button w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300">
+                        Zen Zone
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-4 sm:p-6 min-h-[calc(100vh-200px)]">
+                <!-- AI Wellness Buddy (Chatbot) -->
+                <div id="chat-tab" class="tab-content fade-in">
+                    <div class="flex flex-col h-[calc(100vh-250px)]">
+                        <div id="chat-window" class="flex-grow overflow-y-auto p-4 space-y-4">
+                            <!-- Initial AI message -->
+                            <div class="flex justify-start">
+                                <div class="chat-bubble-ai p-3 rounded-lg max-w-xs lg:max-w-md">
+                                    <p>Hi there! I'm your AI Wellness Buddy. How are you feeling today? Feel free to share anything on your mind.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex">
+                            <input type="text" id="chat-input" class="flex-grow border-slate-300 rounded-l-lg focus:ring-blue-500 focus:border-blue-500 w-full" placeholder="Type your message...">
+                            <button id="send-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r-lg transition-colors duration-300">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mood & Gratitude Journal -->
+                <div id="journal-tab" class="tab-content fade-in hidden">
+                    <h2 class="text-2xl font-bold text-slate-700 mb-4">My Journal</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-md font-medium text-slate-600 mb-2">How are you feeling?</label>
+                            <div class="flex justify-around items-center bg-slate-100 p-4 rounded-lg">
+                                <button onclick="selectMood('😄')" class="mood-emoji text-4xl transform hover:scale-125 transition-transform">😄</button>
+                                <button onclick="selectMood('😊')" class="mood-emoji text-4xl transform hover:scale-125 transition-transform">😊</button>
+                                <button onclick="selectMood('😐')" class="mood-emoji text-4xl transform hover:scale-125 transition-transform">😐</button>
+                                <button onclick="selectMood('😔')" class="mood-emoji text-4xl transform hover:scale-125 transition-transform">😔</button>
+                                <button onclick="selectMood('😠')" class="mood-emoji text-4xl transform hover:scale-125 transition-transform">😠</button>
+                            </div>
+                            <input type="hidden" id="selected-mood" value="">
+                        </div>
+                        <div>
+                            <label for="journal-entry" class="block text-md font-medium text-slate-600 mb-2">Today, I'm grateful for...</label>
+                            <textarea id="journal-entry" rows="6" class="w-full border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Write down something that made you smile, a small win, or anything you appreciate."></textarea>
+                        </div>
+                        <button id="save-journal" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 shadow-md">
+                            Save Entry
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Personalized "Zen Zone" -->
+                <div id="zen-tab" class="tab-content fade-in hidden">
+                    <h2 class="text-2xl font-bold text-slate-700 mb-4">Your Zen Zone</h2>
+                    <p class="text-slate-600 mb-6">Here are some resources to help you find your calm. We'll personalize this more as we get to know you.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Resource Card 1 -->
+                        <div class="bg-slate-100 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <img src="https://placehold.co/600x400/a5b4fc/ffffff?text=Meditation" alt="Meditation" class="w-full h-40 object-cover">
+                            <div class="p-4">
+                                <h3 class="font-bold">5-Minute Guided Meditation</h3>
+                                <p class="text-sm text-slate-600 mt-1">Clear your mind and find focus with this short, calming meditation.</p>
+                            </div>
+                        </div>
+                        <!-- Resource Card 2 -->
+                        <div class="bg-slate-100 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <img src="https://placehold.co/600x400/93c5fd/ffffff?text=Music" alt="Music" class="w-full h-40 object-cover">
+                            <div class="p-4">
+                                <h3 class="font-bold">Calming Ambient Music</h3>
+                                <p class="text-sm text-slate-600 mt-1">A playlist of gentle sounds perfect for studying, relaxing, or sleeping.</p>
+                            </div>
+                        </div>
+                        <!-- Resource Card 3 -->
+                        <div class="bg-slate-100 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <img src="https://placehold.co/600x400/6ee7b7/ffffff?text=Breathing" alt="Breathing" class="w-full h-40 object-cover">
+                            <div class="p-4">
+                                <h3 class="font-bold">Box Breathing Exercise</h3>
+                                <p class="text-sm text-slate-600 mt-1">A simple technique to calm your nervous system in moments of stress.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SOS Modal -->
+    <div id="sos-modal" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl p-6 m-4 max-w-md w-full relative">
+            <h2 class="text-2xl font-bold text-red-600 mb-4">Immediate Support</h2>
+            <p class="text-slate-600 mb-6">If you are in crisis or need someone to talk to right away, please reach out to one of these resources. You are not alone.</p>
+            <ul class="space-y-3 text-left">
+                <li><a href="#" class="font-semibold text-blue-600 hover:underline">Crisis Text Line:</a> Text HOME to 741741</li>
+                <li><a href="#" class="font-semibold text-blue-600 hover:underline">The Trevor Project:</a> 1-866-488-7386</li>
+                <li><a href="#" class="font-semibold text-blue-600 hover:underline">National Suicide Prevention Lifeline:</a> 988</li>
+            </ul>
+            <button id="close-sos-modal" class="absolute top-4 right-4 text-slate-500 hover:text-slate-700">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-0">
+        Journal entry saved!
+    </div>
+
+    <script>
+        // --- Tab Navigation Logic ---
+        const tabs = document.querySelectorAll('.tab-content');
+        const tabButtons = document.querySelectorAll('.tab-button');
+
+        function showTab(tabId) {
+            tabs.forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.getElementById(tabId + '-tab').classList.remove('hidden');
+
+            tabButtons.forEach(button => {
+                button.classList.remove('border-blue-500', 'text-blue-600');
+                button.classList.add('border-transparent', 'text-slate-500', 'hover:text-slate-700', 'hover:border-slate-300');
+            });
+            event.currentTarget.classList.add('border-blue-500', 'text-blue-600');
+            event.currentTarget.classList.remove('border-transparent', 'text-slate-500');
+        }
+
+        // --- Chatbot Logic ---
+        const chatWindow = document.getElementById('chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+
+        const addMessage = (message, sender) => {
+            const bubble = document.createElement('div');
+            bubble.classList.add('flex', sender === 'user' ? 'justify-end' : 'justify-start');
+            bubble.innerHTML = `
+                <div class="${sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'} p-3 rounded-lg max-w-xs lg:max-w-md">
+                    <p>${message}</p>
+                </div>
+            `;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to bottom
+        };
+
+        const handleSendMessage = async () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, 'user');
+                chatInput.value = '';
+                // Simulate AI thinking
+                setTimeout(async () => {
+                    addMessage("Thinking...", 'ai-typing');
+                    const aiResponse = await getAIResponse(message);
+                    // Remove "Thinking..." message
+                    const typingIndicator = chatWindow.querySelector('.chat-bubble-ai-typing');
+                    if(typingIndicator) typingIndicator.parentElement.parentElement.remove();
+                    
+                    addMessage(aiResponse, 'ai');
+                }, 500);
+            }
+        };
+
+        // Call Gemini API for a response
+        const getAIResponse = async (prompt) => {
+            // This is a simplified call to the Gemini API.
+            // In a real app, you'd handle API keys and errors more robustly.
+            const fullPrompt = `You are Zenith AI, a friendly and supportive wellness buddy for young people. You are not a therapist. Your goal is to be empathetic, encouraging, and provide gentle, positive guidance. Keep your responses concise (2-3 sentences). User says: "${prompt}"`;
+            
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: fullPrompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    return "I'm not sure how to respond to that, but I'm here to listen. Could you tell me more?";
+                }
+            } catch (error) {
+                console.error("Error fetching AI response:", error);
+                return "Sorry, I'm having a little trouble connecting right now. Let's try again in a moment.";
+            }
+        };
+
+
+        sendButton.addEventListener('click', handleSendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSendMessage();
+            }
+        });
+
+        // --- Journal Logic ---
+        const moodEmojis = document.querySelectorAll('.mood-emoji');
+        const selectedMoodInput = document.getElementById('selected-mood');
+        const saveJournalButton = document.getElementById('save-journal');
+        const toast = document.getElementById('toast');
+
+        function selectMood(mood) {
+            selectedMoodInput.value = mood;
+            moodEmojis.forEach(emoji => {
+                emoji.classList.remove('ring-4', 'ring-blue-300', 'rounded-full');
+            });
+            event.currentTarget.classList.add('ring-4', 'ring-blue-300', 'rounded-full');
+        }
+
+        saveJournalButton.addEventListener('click', () => {
+            const mood = selectedMoodInput.value;
+            const entry = document.getElementById('journal-entry').value;
+
+            if (!mood) {
+                alert('Please select a mood!'); // In a real app, use a custom modal
+                return;
+            }
+
+            // In a real app, you would send this data to your backend (e.g., Firestore)
+            console.log('Mood:', mood);
+            console.log('Entry:', entry);
+            // Here you would also run sentiment analysis on the 'entry' text.
+
+            // Show confirmation toast
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 3000);
+
+            // Clear inputs
+            selectedMoodInput.value = '';
+            document.getElementById('journal-entry').value = '';
+            moodEmojis.forEach(emoji => emoji.classList.remove('ring-4', 'ring-blue-300', 'rounded-full'));
+        });
+
+        // --- SOS Modal Logic ---
+        const sosButton = document.getElementById('sos-button');
+        const sosModal = document.getElementById('sos-modal');
+        const closeSosModalButton = document.getElementById('close-sos-modal');
+
+        sosButton.addEventListener('click', () => {
+            sosModal.classList.remove('hidden');
+            sosModal.classList.add('flex');
+        });
+
+        closeSosModalButton.addEventListener('click', () => {
+            sosModal.classList.add('hidden');
+            sosModal.classList.remove('flex');
+        });
+
+        // Close modal if clicking outside of it
+        sosModal.addEventListener('click', (e) => {
+            if (e.target === sosModal) {
+                sosModal.classList.add('hidden');
+                sosModal.classList.remove('flex');
+            }
+        });
+
+    </script>
+</body>
+</html>
